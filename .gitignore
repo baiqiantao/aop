@@ -1,0 +1,14 @@
+*.iml
+.gradle
+/local.properties
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+/.idea
+/mylibrary/build/
+app/libs/
+mylibrary/libs/
+mylibrary/src/main/res/drawable/
+mylibrary2/libs/
+mylibrary2/src/main/res/drawable/

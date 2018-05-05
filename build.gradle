@@ -1,0 +1,51 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+        mavenCentral()//【aspectj】需要依赖maven仓库
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.1.2'
+
+        classpath 'org.aspectj:aspectjtools:1.8.9'//【aspectj】编写gradle编译脚本
+        classpath 'org.aspectj:aspectjweaver:1.8.9'//【aspectj】编写gradle编译脚本
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+
+//AOP需要执行的脚本，每一个application和library都需要
+import org.aspectj.bridge.MessageHandler
+import org.aspectj.tools.ajc.Main
+
+def aop(variants) {
+    variants.all { variant ->
+        JavaCompile javaCompile = variant.javaCompile
+        String[] args;
+        javaCompile.doFirst {
+            args = ["-showWeaveInfo",
+                    "-1.8",
+                    "-inpath", javaCompile.destinationDir.toString(),
+                    "-aspectpath", javaCompile.classpath.asPath,
+                    "-d", javaCompile.destinationDir.toString(),
+                    "-classpath", path,
+                    "-bootclasspath", project.android.bootClasspath.join(File.pathSeparator)]
+        }
+
+
+        javaCompile.doLast {
+            new Main().run(args, new MessageHandler(false));
+        }
+    }
+}
